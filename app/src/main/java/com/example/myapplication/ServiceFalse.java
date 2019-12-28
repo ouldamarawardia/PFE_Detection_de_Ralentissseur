@@ -81,7 +81,57 @@ public class ServiceFalse extends Service implements SensorEventListener{
                         directprec = location.getBearingAccuracyDegrees();
                     }
 
-                    Recolt donnees = new Recolt(alt, longi, sped, speedprec, dir, directprec,vilocity ,x, y, z,markable);
+                    Recolt donnees = new Recolt(alt, longi, sped, speedprec, dir, directprec,vilocity ,x, y, z,false);
+                    db.daoAccess().insertRacolt(donnees);
+                    int h=db.daoAccess().loadalldatas().size()-1;
+                    Log.i(TAG, ""+ db.daoAccess().loadalldatas().get(h));
+
+                    markable=false;
+
+                    File exportDir = new File(Environment.getExternalStorageDirectory(), "");
+                    if (!exportDir.exists()) {
+                        exportDir.mkdirs();
+                    }
+                    File file = new File(context.getExternalCacheDir(), "Hambouk" + ".csv");
+                    try {
+                        file.createNewFile();
+                        CSVWriter csvWrite = new CSVWriter(new FileWriter(file));
+                        Cursor curCSV = db.query("SELECT * FROM recolts" , null);
+                        csvWrite.writeNext(curCSV.getColumnNames());
+                        while (curCSV.moveToNext()) {
+                            String arrStr[] = new String[curCSV.getColumnCount()];
+                            for (int i = 0; i < curCSV.getColumnCount() - 1; i++)
+                                arrStr[i] = curCSV.getString(i);
+                            csvWrite.writeNext(arrStr);
+                        }
+                        csvWrite.close();
+                        curCSV.close();
+                    } catch (Exception sqlEx) {
+                        Log.e("MainActivity", sqlEx.getMessage(), sqlEx);
+                    }
+
+                }
+            }
+        };
+    }public void trueth() {
+        locationCallback = new LocationCallback(){
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                for(Location location:locationResult.getLocations()) {
+                    alt = location.getLatitude();
+                    longi = location.getLongitude();
+                    sped = location.getSpeed();
+                    dir = location.getBearing();
+                    if (Build.VERSION.SDK_INT < 26) {
+                        speedprec = 0;
+                        directprec = 0;
+                    }
+                    else {
+                        speedprec = location.getSpeedAccuracyMetersPerSecond();
+                        directprec = location.getBearingAccuracyDegrees();
+                    }
+
+                    Recolt donnees = new Recolt(alt, longi, sped, speedprec, dir, directprec,vilocity ,x, y, z,true);
                     db.daoAccess().insertRacolt(donnees);
                     int h=db.daoAccess().loadalldatas().size()-1;
                     Log.i(TAG, ""+ db.daoAccess().loadalldatas().get(h));
