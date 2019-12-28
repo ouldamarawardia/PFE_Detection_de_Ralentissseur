@@ -15,18 +15,15 @@ import com.google.android.gms.location.LocationResult;
 
 
 public class MainActivity extends AppCompatActivity  {
-    boolean b=true;
-    String TAG;
+
     Button btn ;
     ServiceFalse SF;
-    MyDatabase db;
-    LocationCallback locationCallback;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        db= Room.databaseBuilder(getApplicationContext(), MyDatabase.class, MyDatabase.DB_Racolt).allowMainThreadQueries().fallbackToDestructiveMigration().build();
-        TAG="MyActivity";
         SF = new ServiceFalse();
         btn = findViewById(R.id.save);
         final Intent False = new Intent(MainActivity.this,ServiceFalse.class);
@@ -34,7 +31,9 @@ public class MainActivity extends AppCompatActivity  {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i(TAG, "AWDIIII");
+                SF.markable=true;
+                SF.buildLocationCallBack();
+
             }
         });
     }

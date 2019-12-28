@@ -63,7 +63,7 @@ public class ServiceFalse extends Service implements SensorEventListener{
 
     }
 
-    private void buildLocationCallBack() {
+    protected void buildLocationCallBack() {
         locationCallback = new LocationCallback(){
             @Override
             public void onLocationResult(LocationResult locationResult) {
@@ -81,10 +81,12 @@ public class ServiceFalse extends Service implements SensorEventListener{
                         directprec = location.getBearingAccuracyDegrees();
                     }
 
-                    Recolt donnees = new Recolt(alt, longi, sped, speedprec, dir, directprec,vilocity ,x, y, z,false);
+                    Recolt donnees = new Recolt(alt, longi, sped, speedprec, dir, directprec,vilocity ,x, y, z,markable);
                     db.daoAccess().insertRacolt(donnees);
                     int h=db.daoAccess().loadalldatas().size()-1;
                     Log.i(TAG, ""+ db.daoAccess().loadalldatas().get(h));
+
+                    markable=false;
 
                     File exportDir = new File(Environment.getExternalStorageDirectory(), "");
                     if (!exportDir.exists()) {
